@@ -1,16 +1,17 @@
 "use client";
-
-import { useState, useEffect, Suspense } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-
 import Form from "@components/Form";
 
-const EditPrompt = () => {
+const UpdatePrompt = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const promptId = searchParams.get("id");
 
   const [submitting, setSubmitting] = useState(false);
+
+  const searchParams = useSearchParams();
+
+  const promptId = searchParams.get("id");
+
   const [post, setPost] = useState({
     prompt: "",
     tag: "",
@@ -26,14 +27,18 @@ const EditPrompt = () => {
         tag: data.tag,
       });
     };
-    if (promptId) getPromptDetails();
+    if (promptId) {
+      getPromptDetails();
+    }
   }, [promptId]);
 
   const updatePrompt = async (e) => {
     e.preventDefault();
     setSubmitting(true);
 
-    if (!promptId) return alert("Prompt ID not found");
+    if (!promptId) {
+      return alert("Prompt ID  not found!");
+    }
 
     try {
       const response = await fetch(`/api/prompt/${promptId}`, {
@@ -55,14 +60,20 @@ const EditPrompt = () => {
   };
 
   return (
+    <Form
+      type="Edit"
+      post={post}
+      setPost={setPost}
+      submitting={submitting}
+      handleSubmit={updatePrompt}
+    ></Form>
+  );
+};
+
+const EditPrompt = () => {
+  return (
     <Suspense>
-      <Form
-        type="Edit"
-        post={post}
-        setPost={setPost}
-        submitting={submitting}
-        handleSubmit={updatePrompt}
-      />
+      <UpdatePrompt />
     </Suspense>
   );
 };
